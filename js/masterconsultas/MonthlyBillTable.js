@@ -39,20 +39,26 @@ var MonthlyBillTable = function($container) {
 			return `<th id="gridtable_${id}" role="columnheader" class="ui-state-default ui-th-column ui-th-ltr" style="width: ${width};"><div id="jqgh_gridtable_${id}" class="ui-jqgrid-sortable">${text}</div></th>`;
 		}
 
-		$headerTable.find("th#gridtable_dateOperation").css("width", "60px").find(">div").text("F. Operacion");       // Substracting 73px to each date field..
-		$headerTable.find("th#gridtable_datePresentation").css("width", "60px").find(">div").text("F. Presentacion"); // Substracting 73px to each date field..
-		$headerTable.find("th#gridtable_detailOperation").css("width", "220px").after(getHeaderHtml("moreDetail", "150px", "Detalle")); // Using 15px of the date fields..
-		$headerTable.find("th#gridtable_share").css("width", "40px").find(">div").text("Cuotas"); // Cantidad de cuotas ... making smaller..
-		$headerTable.find("th#gridtable_totalInPesos").after(getHeaderHtml("realTotalInPesos", "70px", "Total $")); // Space for amount
-		$headerTable.find("th#gridtable_totalInPesos").after(getHeaderHtml("totalInPesosLeft", "60px", "Restante $")); // Space for amount left
+		$headerTable.find("th#gridtable_dateOperation").css("width", "60px").find(">div").text("F. Operacion");			// Changing from 133px to 60px = 73px gain
+		$headerTable.find("th#gridtable_datePresentation").css("width", "60px").find(">div").text("F. Presentacion");	// Changing from 133px to 60px = 73px gain
+		$headerTable.find("th#gridtable_detailOperation").css("width", "200px")											// Changing from 355px to 200px = 155px gain
+			.after(getHeaderHtml("moreDetail", "180px", "Detalle"));
+		$headerTable.find("th#gridtable_share").css("width", "40px").find(">div").text("Cuotas");						// Changing from 111px to 40px = 71px gain
+		$headerTable.find("th#gridtable_totalInPesos")
+			.after(getHeaderHtml("realTotalInPesos", "70px", "Total $"));
+		$headerTable.find("th#gridtable_totalInPesos")
+			.after(getHeaderHtml("totalInPesosLeft", "60px", "Restante $"));
 		$headerTable.find("th#gridtable_totalInDollars").css("width", "55px"); // This is just bugged in the original page..
 
-		$table.find("tr.jqgfirstrow td:eq(0)").css("width", "60px"); // Substracting 73px to each date field..
-		$table.find("tr.jqgfirstrow td:eq(1)").css("width", "60px"); // Substracting 73px to each date field..
-		$table.find("tr.jqgfirstrow td:eq(2)").css("width", "220px").after('<td role="gridcell" style="height:0px;width:150px;"></td>'); // Using 15px of the date fields..
-		$table.find("tr.jqgfirstrow td:eq(4)").css("width", "40px"); // Cantidad de cuotas ... making smaller..
-		$table.find("tr.jqgfirstrow td:eq(5)").after('<td role="gridcell" style="height:0px;width:70px;"></td>'); // Space for amount
-		$table.find("tr.jqgfirstrow td:eq(5)").after('<td role="gridcell" style="height:0px;width:60px;"></td>'); // Space for amount left
+		$table.find("tr.jqgfirstrow td:eq(0)").css("width", "60px");													// Changing from 133px to 60px = 73px gain
+		$table.find("tr.jqgfirstrow td:eq(1)").css("width", "60px");													// Changing from 133px to 60px = 73px gain
+		$table.find("tr.jqgfirstrow td:eq(2)").css("width", "200px")													// Changing from 355px to 200px = 155px gain
+			.after('<td role="gridcell" style="height:0px;width:180px;"></td>');
+		$table.find("tr.jqgfirstrow td:eq(4)").css("width", "40px");													// Changing from 111px to 40px = 71px gain
+		$table.find("tr.jqgfirstrow td:eq(5)")
+			.after('<td role="gridcell" style="height:0px;width:70px;"></td>');
+		$table.find("tr.jqgfirstrow td:eq(5)")
+			.after('<td role="gridcell" style="height:0px;width:60px;"></td>');
 		$table.find("tr.jqgfirstrow td:eq(8)").css("width", "55px"); // This is just bugged in the original page..
 
 		setTimeout(function() {
@@ -101,7 +107,7 @@ var MonthlyBillTable = function($container) {
 				if (self.find("input").length) return; // Input was already created.
 
 				let prevText = self.text();
-				let input = $(`<input type="text" style="width: 98%; font-family: inherit;" value="${self.text()}">`);
+				let input = $(`<input type="text" style="width: 97%; font-family: inherit;" value="${self.text()}">`);
 				input.on("keyup", function(e) {
 					if (e.keyCode == ENTER_KEY_CODE) {
 						let newDetail = $(this).val();
@@ -113,6 +119,7 @@ var MonthlyBillTable = function($container) {
 					}
 				});
 				self.html(input);
+				input.focus();
 			});
 		}, 1500); // TODO ?
 	}
