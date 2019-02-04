@@ -1,0 +1,49 @@
+﻿{
+    "manifest_version": 2,
+
+    "name": "Palito Helper",
+    "short_name": "PalitoHelper",
+    "description": "Chrome extension to modify pages on the fly in order to make life easier",
+    "author": "Pablo Matías Gomez",
+    "version": "1.0.0",
+
+    "icons": {
+        "16": "images/icons/stick.png",
+        "48": "images/icons/stick.png",
+        "128": "images/icons/stick.png"
+    },
+
+    "web_accessible_resources": [
+        "images/*.*",
+        "css/santanderrio/styles.css",
+        "js/functions.js"
+    ],
+
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.masterconsultas.com.ar/*",
+                "*://*.mercadopago.com.ar/*",
+                "*://*.personas.santanderrio.com.ar/*"
+            ],
+            "all_frames": true,
+
+            "js": [
+                "js/jquery-3.3.1.min.js",
+
+                "js/masterconsultas/MonthlyBillTable.js",
+
+                "js/mercadopago/ActivitiesBalancePage.js",
+               
+                "js/santanderrio/ResumenInversionesPage.js",
+
+                "js/functions.js"
+            ],
+
+            "css": [
+                "css/santanderrio/styles.css"
+            ]
+        }
+    ]
+}
+

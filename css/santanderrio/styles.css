@@ -1,0 +1,45 @@
+.infoTable td {
+	padding: 2px 15px !important;
+	border-left: 1px solid #c8c8c8;
+    border-right: 1px solid #c8c8c8;
+	line-height: 12px !important;
+}
+
+.infoTable th {
+	border-left: 1px solid #c8c8c8;
+    border-right: 1px solid #c8c8c8;
+}
+
+.infoTable tr:nth-child(even) td {
+	background: #EEE;
+}
+
+.infoTable tr:nth-child(odd) td {
+	background: #FFF;
+}
+
+
+
+/* RIGHT COLUMN LINKS */
+.tilesTRInfo td div.resumen,
+.tilesTRInfo td div.formlink {
+	white-space: nowrap;
+	display: inline-block;
+}
+
+.tilesTRInfo td div.resumen a,
+.tilesTRInfo td div.formlink a {
+	color: blue;
+}
+
+.tilesTRInfo td div.resumen:after,
+.tilesTRInfo td div.formlink:after {
+	content: " | ";
+}
+
+.tilesTRInfo td div.resumen:last-child:after,
+.tilesTRInfo td div.formlink:last-child:after {
+	content: '';
+}
+
+
