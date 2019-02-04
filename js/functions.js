@@ -28,7 +28,6 @@
 		"www.personas.santanderrio.com.ar": handleSantanderRio
 	}
 
-debugger;
 	let handler = SITES_MAP[location.hostname];
 	if (handler) {
 		return handler();

@@ -1,13 +1,16 @@
 var MonthlyBillTable = function($container) {
 
+	const ENTER_KEY_CODE = 13;
+	const ESCAPE_KEY_CODE = 27;
+
 	var $headerTable;
 	var $table;
 	var $pageSizeSelector;
 
 	var SHARE_REGEX = /^\d+\/\d+$/;
 
-	var DETAIL_BY_DATE = {
-	};
+	// Will be initialized when reading from sync
+	var detailsByDate = { };
 
 	function setItems() {
 		$headerTable = $container.find("table.ui-jqgrid-htable");
@@ -57,7 +60,7 @@ var MonthlyBillTable = function($container) {
 			var totalLeft = 0;
 			var totalSet = false;
 			$table.find("tr").each(function() {
-				var date = $(this).find("td[aria-describedby=gridtable_dateOperation]").text().trim();
+				var date = getDateFromTr($(this));
 				var share = $(this).find("td[aria-describedby=gridtable_share]").text().trim();
 				var amountPerShare = parseValueToFloat($(this).find("td[aria-describedby=gridtable_totalInPesos]").text().trim());
 				var description = $(this).find("td[aria-describedby=gridtable_detailOperation]").text().trim();
@@ -88,18 +91,55 @@ var MonthlyBillTable = function($container) {
 				}
 
 				let moreDetail = getDetailForDate(date);
-				$(this).find("td[aria-describedby=gridtable_detailOperation]").after('<td role="gridcell" style="text-align:left;" title="' + moreDetail + '">' + moreDetail + '</td>');
+				$(this).find("td[aria-describedby=gridtable_detailOperation]").after('<td role="gridcell" style="text-align:left;" title="' + moreDetail + '" class="more-detail">' + moreDetail + '</td>');
 				$(this).find("td[aria-describedby=gridtable_totalInPesos]").after('<td role="gridcell" style="text-align:center;" title="' + amountStr + '">' + amountStr + '</td>');
 				$(this).find("td[aria-describedby=gridtable_totalInPesos]").after('<td role="gridcell" style="text-align:center;" title="' + amountLeftStr + '">' + amountLeftStr + '</td>');
+			});
+
+			$table.on("click", ".more-detail", function() {
+				let self = $(this);
+				if (self.find("input").length) return; // Input was already created.
+
+				let prevText = self.text();
+				let input = $(`<input type="text" style="width: 98%; font-family: inherit;" value="${self.text()}">`);
+				input.on("keyup", function(e) {
+					if (e.keyCode == ENTER_KEY_CODE) {
+						let newDetail = $(this).val();
+						let date = getDateFromTr($(this).closest("tr"));
+						saveDetailForDate(date, newDetail);
+						self.text(newDetail);
+					} else if (e.keyCode == ESCAPE_KEY_CODE) {
+						self.text(prevText);
+					}
+				});
+				self.html(input);
 			});
 		}, 1500); // TODO ?
 	}
 
+	function getDateFromTr($tr) {
+		return $tr.find("td[aria-describedby=gridtable_dateOperation]").text().trim();
+	}
+
+	function readDetailsByDateFromStore(callback) {
+		chrome.storage.sync.get(["detailsByDate"], function(result) {
+			detailsByDate = result.detailsByDate;
+			callback();
+		});
+	}
+
+	function saveDetailsByDateToStore() {
+		chrome.storage.sync.set({ detailsByDate: detailsByDate});
+	}
+
 	function getDetailForDate(date) {
-		let detail = DETAIL_BY_DATE[date];
-		if (!detail) return '';
-		if (Array.isArray(detail)) return detail.shift();
-		return detail;
+		let detail = detailsByDate[date];
+		return detail || '';
+	}
+
+	function saveDetailForDate(date, detail) {
+		detailsByDate[date] = detail;
+		saveDetailsByDateToStore();
 	}
 
 	function triggerEvent($obj, eventName) {
@@ -110,22 +150,24 @@ var MonthlyBillTable = function($container) {
 		if (!str) return 0;
 		return parseFloat(str.replace(" ", "").replace(".", "").replace(",", ".").trim());
 		// return parseFloat(str.replace(" ", "").replace(",", "").trim());
-	};
+	}
 
 	function parseValueToString(value) {
 		var parts = value.toString().split(".");
 
 		var integerPart = parts[0].split("").reverse().join("").match(/.{1,3}/g).join(".").split("").reverse().join("");
 		return integerPart + (parts[1] ? ("," + parts[1].substr(0, 2)) : ",00");
-	};
+	}
 
 	// Init
 	(function() {
-		setItems();
-		setTimeout(function() {
-			setPageSizeToMax();
-			addDebtAmountColumn();
-		}, 1500); // TODO ?
+		readDetailsByDateFromStore(function() {
+			setItems();
+			setTimeout(function() {
+				setPageSizeToMax();
+				addDebtAmountColumn();
+			}, 1500); // TODO ?
+		});
 	})();
 
 	// Public
