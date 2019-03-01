@@ -5,7 +5,7 @@
     "short_name": "PalitoHelper",
     "description": "Chrome extension to modify pages on the fly in order to make life easier",
     "author": "Pablo Matías Gomez",
-    "version": "1.0.0",
+    "version": "1.0.2",
 
     "icons": {
         "16": "images/icons/stick.png",
@@ -39,7 +39,10 @@
 
                 "js/mercadopago/ActivitiesBalancePage.js",
                
+                "js/santanderrio/Store.js",
                 "js/santanderrio/ResumenInversionesPage.js",
+                "js/santanderrio/TarjetaConsumosPage.js",
+                "js/santanderrio/TarjetaResumenPage.js",
 
                 "js/functions.js"
             ],

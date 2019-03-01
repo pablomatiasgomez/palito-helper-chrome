@@ -19,6 +19,12 @@
 	function handleSantanderRio() {
 		if (location.pathname === "/hb/html/inversiones/invRes.jsp") {
 			return ResumenInversionesPage();
+		} else if (location.pathname === "/hb/html/tarjetas/trjVisCon.jsp" || location.pathname === "/hb/html/tarjetas/trjAmeCon.jsp") {
+			let store = new Store();
+			return TarjetaConsumosPage(store);
+		} else if (location.pathname === "/hb/html/tarjetas/trjResumen.jsp") {
+			let store = new Store();
+			return TarjetaResumenPage(store);
 		}
 	}
 
