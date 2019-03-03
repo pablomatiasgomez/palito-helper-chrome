@@ -59,8 +59,9 @@ var TarjetaConsumosPage = function(store) {
 	}
 
 	function saveDetailForComprobante(comprobante, detail) {
+		if (comprobante.length !== 7) throw "Illegal comprobante";
 		detailsByComprobante[comprobante] = detail;
-		store.saveDetailsByComprobanteToStore();
+		store.saveDetailsByComprobanteToStore(detailsByComprobante);
 	}
 
 	function readDetailsByComprobanteFromStore() {
@@ -75,7 +76,7 @@ var TarjetaConsumosPage = function(store) {
 				} else {
 					setTimeout(check, 200);
 				}
-			}
+			};
 			check();
 		});
 	}
@@ -87,7 +88,7 @@ var TarjetaConsumosPage = function(store) {
 			readDetailsByComprobanteFromStore()
 		]).then(() => {
 			addTableColumns();
-		})
+		});
 	})();
 	
 

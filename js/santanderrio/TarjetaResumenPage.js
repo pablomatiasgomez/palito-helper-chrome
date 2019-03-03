@@ -1,8 +1,5 @@
 var TarjetaResumenPage = function(store) {
 
-	const ENTER_KEY_CODE = 13;
-	const ESCAPE_KEY_CODE = 27;
-
 	const IS_DATE_REGEX = /^\d{2}\/\d{2}\/\d{2}$/;
 
 	// Will be initialized when reading from store
@@ -27,44 +24,28 @@ var TarjetaResumenPage = function(store) {
 				$extraDetail.text(getDetailForComprobante(getComprobanteFromTr($tr)));
 			}
 		});
-
-		$table.on("click", ".extra-detail", function() {
-			let self = $(this);
-			if (self.find("input").length) return; // Input was already created.
-
-			let prevText = self.text();
-			let input = $(`<input type="text" style="width: 97%; font-family: inherit;" value="${self.text()}">`);
-			input.on("keyup", function(e) {
-				if (e.keyCode == ENTER_KEY_CODE) {
-					let newDetail = $(this).val();
-					let comprobante = getComprobanteFromTr($(this).closest("tr"));
-					saveDetailForComprobante(comprobante, newDetail);
-					self.text(newDetail);
-				} else if (e.keyCode == ESCAPE_KEY_CODE) {
-					self.text(prevText);
-				}
-			});
-			self.html(input);
-			input.focus();
-		});
 	}
 
 	function getComprobanteFromTr($tr) {
-		let comprobante = $tr.find("td:eq(3)").text().trim();
-		// TODO check if this is accurate:
-		if (comprobante.indexOf("*") !== -1) {
-			comprobante = "0" + comprobante.slice(0, -1); 
-		}
-		return comprobante;
+		// En resumen online agarramos el comprobante del detalle ya que la columna Comprobante puede decir cualquier cosa..
+		var regex = /^.*\ (\d{6})[*U]$/;
+		let detail = $tr.find("td:eq(1)").text().trim();
+
+		var match = regex.exec(detail);
+		if (!match) return "";
+		return match[1];
 	}
 
 	function getDetailForComprobante(comprobante) {
-		return detailsByComprobante[comprobante] || "";
-	}
-
-	function saveDetailForComprobante(comprobante, detail) {
-		detailsByComprobante[comprobante] = detail;
-		store.saveDetailsByComprobanteToStore();
+		if (comprobante.length < 6) return "";
+		let results = Object.keys(detailsByComprobante).filter(key => key.endsWith(comprobante));
+		if (results.length === 0) {
+			return "";
+		} else if (results.length === 1) {
+			return detailsByComprobante[results[0]];
+		} else {
+			throw "Found more than 1 matching key: " + results;
+		}
 	}
 
 	function readDetailsByComprobanteFromStore() {
@@ -79,7 +60,7 @@ var TarjetaResumenPage = function(store) {
 				} else {
 					setTimeout(check, 200);
 				}
-			}
+			};
 			check();
 		});
 	}
@@ -91,7 +72,7 @@ var TarjetaResumenPage = function(store) {
 			readDetailsByComprobanteFromStore()
 		]).then(() => {
 			addTableColumns();
-		})
+		});
 	})();
 	
 
