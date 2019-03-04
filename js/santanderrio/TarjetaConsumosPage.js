@@ -68,23 +68,10 @@ var TarjetaConsumosPage = function(store) {
 		return store.readDetailsByComprobanteFromStore().then(result => detailsByComprobante = result);
 	}
 
-	function waitForElementToHide(selector) {
-		return new Promise((resolve, reject) => {
-			let check = () => {
-				if (!$(selector).is(":visible")) {
-					resolve();
-				} else {
-					setTimeout(check, 200);
-				}
-			};
-			check();
-		});
-	}
-
 	// Init
 	(function() {
 		Promise.all([
-			waitForElementToHide("#template_wait_div"),
+			PalitoHelperUtils.waitForElementToHide("#template_wait_div"),
 			readDetailsByComprobanteFromStore()
 		]).then(() => {
 			addTableColumns();

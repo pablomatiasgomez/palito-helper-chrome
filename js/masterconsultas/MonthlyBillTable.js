@@ -9,6 +9,7 @@ var MonthlyBillTable = function($container) {
 
 	var SHARE_REGEX = /^\d+\/\d+$/;
 
+	const DETAILS_BY_DATE_STORE_KEY = "masterconsultas.detailsByDate";
 	// Will be initialized when reading from sync
 	var detailsByDate = { };
 
@@ -27,6 +28,7 @@ var MonthlyBillTable = function($container) {
 		var lastValue = $pageSizeSelector.find("option:last").val();
 		$pageSizeSelector.val(lastValue);
 		triggerEvent($pageSizeSelector, "change");
+		return PalitoHelperUtils.waitForElementToHide("#tablaMonthlyBill1 .loading.ui-state-default.ui-state-active");
 	}
 
 	function addDebtAmountColumn() {
@@ -61,82 +63,82 @@ var MonthlyBillTable = function($container) {
 			.after('<td role="gridcell" style="height:0px;width:60px;"></td>');
 		$table.find("tr.jqgfirstrow td:eq(8)").css("width", "55px"); // This is just bugged in the original page..
 
-		setTimeout(function() {
-			var total = 0;
-			var totalLeft = 0;
-			var totalSet = false;
-			$table.find("tr").each(function() {
-				var date = getDateFromTr($(this));
-				var share = $(this).find("td[aria-describedby=gridtable_share]").text().trim();
-				var amountPerShare = parseValueToFloat($(this).find("td[aria-describedby=gridtable_totalInPesos]").text().trim());
-				var description = $(this).find("td[aria-describedby=gridtable_detailOperation]").text().trim();
+		var total = 0;
+		var totalLeft = 0;
+		var totalSet = false;
+		$table.find("tr").each(function() {
+			var date = getDateFromTr($(this));
+			var share = $(this).find("td[aria-describedby=gridtable_share]").text().trim();
+			var amountPerShare = parseValueToFloat($(this).find("td[aria-describedby=gridtable_totalInPesos]").text().trim());
+			var description = $(this).find("td[aria-describedby=gridtable_detailOperation]").text().trim();
 
-				var amountStr = "";
-				var amountLeftStr = "";
-				if (SHARE_REGEX.test(share) && description !== "SU PAGO") {
-					var shares;
-					var sharesLeft;
-					if (share.trim() === "0/0") {
-						shares = 1;
-						sharesLeft = 1;
-					} else {
-						shares = parseInt(share.split("/")[1]);
-						sharesLeft = shares - (share.split("/")[0] - 1); // Minus 1 because I want to count the one that I haven't paid yet.
-					}
-					var amount = shares * amountPerShare;
-					var amountLeft = sharesLeft * amountPerShare;
-
-					total += amount;
-					totalLeft += amountLeft;
-					amountStr = parseValueToString(amount);
-					amountLeftStr = parseValueToString(amountLeft);
-				} else if ($(this).hasClass("gridTotal") && description.indexOf("Total de Consumos") !== -1 && totalSet === false) {
-					totalSet = true;
-					amountStr = parseValueToString(total);
-					amountLeftStr = parseValueToString(totalLeft);
+			var amountStr = "";
+			var amountLeftStr = "";
+			if (SHARE_REGEX.test(share) && description !== "SU PAGO") {
+				var shares;
+				var sharesLeft;
+				if (share.trim() === "0/0") {
+					shares = 1;
+					sharesLeft = 1;
+				} else {
+					shares = parseInt(share.split("/")[1]);
+					sharesLeft = shares - (share.split("/")[0] - 1); // Minus 1 because I want to count the one that I haven't paid yet.
 				}
+				var amount = shares * amountPerShare;
+				var amountLeft = sharesLeft * amountPerShare;
 
-				let moreDetail = getDetailForDate(date);
-				$(this).find("td[aria-describedby=gridtable_detailOperation]").after('<td role="gridcell" style="text-align:left;" title="' + moreDetail + '" class="more-detail">' + moreDetail + '</td>');
-				$(this).find("td[aria-describedby=gridtable_totalInPesos]").after('<td role="gridcell" style="text-align:center;" title="' + amountStr + '">' + amountStr + '</td>');
-				$(this).find("td[aria-describedby=gridtable_totalInPesos]").after('<td role="gridcell" style="text-align:center;" title="' + amountLeftStr + '">' + amountLeftStr + '</td>');
+				total += amount;
+				totalLeft += amountLeft;
+				amountStr = parseValueToString(amount);
+				amountLeftStr = parseValueToString(amountLeft);
+			} else if ($(this).hasClass("gridTotal") && description.indexOf("Total de Consumos") !== -1 && totalSet === false) {
+				totalSet = true;
+				amountStr = parseValueToString(total);
+				amountLeftStr = parseValueToString(totalLeft);
+			}
+
+			let moreDetail = getDetailForDate(date);
+			$(this).find("td[aria-describedby=gridtable_detailOperation]").after('<td role="gridcell" style="text-align:left;" title="' + moreDetail + '" class="more-detail">' + moreDetail + '</td>');
+			$(this).find("td[aria-describedby=gridtable_totalInPesos]").after('<td role="gridcell" style="text-align:center;" title="' + amountStr + '">' + amountStr + '</td>');
+			$(this).find("td[aria-describedby=gridtable_totalInPesos]").after('<td role="gridcell" style="text-align:center;" title="' + amountLeftStr + '">' + amountLeftStr + '</td>');
+		});
+
+		$table.on("click", ".more-detail", function() {
+			let self = $(this);
+			if (self.find("input").length) return; // Input was already created.
+
+			let prevText = self.text();
+			let input = $(`<input type="text" style="width: 97%; font-family: inherit;" value="${self.text()}">`);
+			input.on("keyup", function(e) {
+				if (e.keyCode == ENTER_KEY_CODE) {
+					let newDetail = $(this).val();
+					let date = getDateFromTr($(this).closest("tr"));
+					saveDetailForDate(date, newDetail);
+					self.text(newDetail);
+				} else if (e.keyCode == ESCAPE_KEY_CODE) {
+					self.text(prevText);
+				}
 			});
-
-			$table.on("click", ".more-detail", function() {
-				let self = $(this);
-				if (self.find("input").length) return; // Input was already created.
-
-				let prevText = self.text();
-				let input = $(`<input type="text" style="width: 97%; font-family: inherit;" value="${self.text()}">`);
-				input.on("keyup", function(e) {
-					if (e.keyCode == ENTER_KEY_CODE) {
-						let newDetail = $(this).val();
-						let date = getDateFromTr($(this).closest("tr"));
-						saveDetailForDate(date, newDetail);
-						self.text(newDetail);
-					} else if (e.keyCode == ESCAPE_KEY_CODE) {
-						self.text(prevText);
-					}
-				});
-				self.html(input);
-				input.focus();
-			});
-		}, 1500); // TODO ?
+			self.html(input);
+			input.focus();
+		});
 	}
 
 	function getDateFromTr($tr) {
 		return $tr.find("td[aria-describedby=gridtable_dateOperation]").text().trim();
 	}
 
-	function readDetailsByDateFromStore(callback) {
-		chrome.storage.sync.get(["detailsByDate"], function(result) {
-			detailsByDate = result.detailsByDate;
-			callback();
+	function readDetailsByDateFromStore() {
+		return new Promise((resolve, reject) => {
+			chrome.storage.sync.get(DETAILS_BY_DATE_STORE_KEY, function(result) {
+				detailsByDate = result[DETAILS_BY_DATE_STORE_KEY];
+				resolve(detailsByDate);
+			});
 		});
 	}
 
 	function saveDetailsByDateToStore() {
-		chrome.storage.sync.set({ detailsByDate: detailsByDate});
+		chrome.storage.sync.set({ [DETAILS_BY_DATE_STORE_KEY]: detailsByDate });
 	}
 
 	function getDetailForDate(date) {
@@ -168,12 +170,15 @@ var MonthlyBillTable = function($container) {
 
 	// Init
 	(function() {
-		readDetailsByDateFromStore(function() {
+		Promise.all([
+			PalitoHelperUtils.waitForElementToLoad("#tablaMonthlyBill1")
+				.then(() => PalitoHelperUtils.waitForElementToHide("#loadingIndicator")),
+			readDetailsByDateFromStore()
+		]).then(() => {
 			setItems();
-			setTimeout(function() {
-				setPageSizeToMax();
-				addDebtAmountColumn();
-			}, 1500); // TODO ?
+			return setPageSizeToMax();
+		}).then(() => {
+			addDebtAmountColumn();
 		});
 	})();
 
