@@ -1,3 +1,4 @@
+"use strict";
 var MonthlyBillTable = function($container) {
 
 	const ENTER_KEY_CODE = 13;

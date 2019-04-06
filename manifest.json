@@ -5,7 +5,7 @@
     "short_name": "PalitoHelper",
     "description": "Chrome extension to modify pages on the fly in order to make life easier",
     "author": "Pablo Matías Gomez",
-    "version": "1.0.2",
+    "version": "1.1.0",
 
     "icons": {
         "16": "images/icons/stick.png",
@@ -26,28 +26,50 @@
     "content_scripts": [
         {
             "matches": [
-                "*://*.masterconsultas.com.ar/*",
-                "*://*.mercadopago.com.ar/*",
-                "*://*.personas.santanderrio.com.ar/*"
+                "*://*.masterconsultas.com.ar/*"
             ],
             "all_frames": true,
-
             "js": [
                 "js/jquery-3.3.1.min.js",
                 "js/PalitoHelperUtils.js",
 
                 "js/masterconsultas/MonthlyBillTable.js",
+                "js/masterconsultas/pages.js"
+            ],
+            "css": [
+            ]
+        },
+        {
+            "matches": [
+                "*://*.mercadopago.com.ar/*"
+            ],
+            "all_frames": true,
+            "js": [
+                "js/jquery-3.3.1.min.js",
+                "js/PalitoHelperUtils.js",
 
                 "js/mercadopago/ActivitiesBalancePage.js",
-               
-                "js/santanderrio/Store.js",
-                "js/santanderrio/ResumenInversionesPage.js",
-                "js/santanderrio/TarjetaConsumosPage.js",
-                "js/santanderrio/TarjetaResumenPage.js",
-
-                "js/functions.js"
+                "js/mercadopago/pages.js"
             ],
+            "css": [
+            ]
+        },
+        {
+            "matches": [
+                "*://*.personas.santanderrio.com.ar/*"
+            ],
+            "all_frames": true,
+            "js": [
+                "js/jquery-3.3.1.min.js",
+                "js/PalitoHelperUtils.js",
 
+                "js/santanderrio/Utils.js",
+                "js/santanderrio/Store.js",
+
+                "js/santanderrio/Tarjetas.js",
+                "js/santanderrio/Inversiones.js",
+                "js/santanderrio/pages.js"
+            ],
             "css": [
                 "css/santanderrio/styles.css"
             ]

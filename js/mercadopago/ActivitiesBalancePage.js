@@ -1,3 +1,4 @@
+"use strict";
 var ActivitiesBalancePage = function() {
 
 	function addInvestOperationsIframe() {

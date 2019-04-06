@@ -1,45 +1,120 @@
-.infoTable td {
-	padding: 2px 15px !important;
-	border-left: 1px solid #c8c8c8;
-    border-right: 1px solid #c8c8c8;
-	line-height: 12px !important;
+/* Home */
+div.app home > obp-swiper {
+    display: block !important;
+    height: 100px !important;
+    margin-top: -70px !important;
+    background-color: black !important;
 }
-
-.infoTable th {
-	border-left: 1px solid #c8c8c8;
-    border-right: 1px solid #c8c8c8;
+div.app home > obp-swiper .swiper-container-horizontal {
+    display: none !important;
 }
+/* ... */
 
-.infoTable tr:nth-child(even) td {
-	background: #EEE;
+
+div.app .sinfecha {
+    color: #585858 !important;
 }
-
-.infoTable tr:nth-child(odd) td {
-	background: #FFF;
-}
-
-
-
-/* RIGHT COLUMN LINKS */
-.tilesTRInfo td div.resumen,
-.tilesTRInfo td div.formlink {
-	white-space: nowrap;
-	display: inline-block;
-}
-
-.tilesTRInfo td div.resumen a,
-.tilesTRInfo td div.formlink a {
-	color: blue;
-}
-
-.tilesTRInfo td div.resumen:after,
-.tilesTRInfo td div.formlink:after {
-	content: " | ";
-}
-
-.tilesTRInfo td div.resumen:last-child:after,
-.tilesTRInfo td div.formlink:last-child:after {
-	content: '';
+div.app .sinfecha span {
+    position: relative !important;
 }
 
 
+/* Tablas */
+div.app .tabla-contenedor .tabla-encabezado {
+    padding: 8px 15px !important;
+}
+div.app table {
+    border-collapse: collapse !important;
+}
+div.app table th {
+    font-size: 13px !important;
+    padding: 8px 10px !important;
+}
+div.app table td {
+    padding: 3px 5px !important;
+    border: 1px solid lightgrey !important;
+    line-height: 16px !important;
+}
+div.app table .divisor {
+    background: none !important;
+}
+
+
+/* Movimientos de cuenta */
+cuentas-inicio-movimientos table thead th {
+    height: 25px !important;
+    padding: 4px 5px !important;
+}
+
+/* Encabezado de tarjeta en el resumen */
+tarjeta-ultimo-resumen .tabla-encabezado h3 {
+    display: inline !important;
+}
+tarjeta-ultimo-resumen .tabla-encabezado p {
+    float: right !important;
+    font-size: 22px !important;
+    font-weight: 300 !important;
+    margin-right: 40px !important;
+    color: black !important;
+}
+
+
+td.extra-detail {
+    font-weight: bold;
+}
+input.extra-detail-edit {
+    width: 100%;
+    text-align: right;
+}
+
+/* Rows: unica linea, strong lo importante */
+obp-movimientos-tarjeta td strong {
+    display: inline !important;
+    font-weight: 600 !important;
+}
+obp-movimientos-tarjeta td span br {
+    display: none !important;
+}
+
+obp-movimientos-tarjeta td:nth-child(2),
+obp-movimientos-tarjeta th:nth-child(2) {
+    width: 40% !important;
+}
+obp-movimientos-tarjeta td:nth-child(3),
+obp-movimientos-tarjeta th:nth-child(3) {
+    width: 20% !important;
+}
+
+/* .... */
+
+/* Headers mas bajitos */
+.desktop obp-inversiones-header .perfilYtotales,
+tarjetas tarjetas-detalles {
+    margin-top: 100px !important;
+}
+
+
+/* Inversiones*/
+plazo-fijo-tenencia .tabla-contenedor .tabla-encabezado h3,
+plazo-fijo-tenencia .tabla-contenedor .tabla-encabezado .intervinientes,
+plazo-fijo-tenencia .tabla-contenedor .tabla-encabezado br,
+fondos-tenencia .tabla-contenedor .tabla-encabezado h3,
+fondos-tenencia .tabla-contenedor .tabla-encabezado .intervinientes,
+fondos-tenencia .tabla-contenedor .tabla-encabezado br,
+titulos-valores-tenencia .tabla-contenedor .tabla-encabezado h3,
+titulos-valores-tenencia .tabla-contenedor .tabla-encabezado .intervinientes,
+titulos-valores-tenencia .tabla-contenedor .tabla-encabezado br {
+    display: none !important;
+}
+
+plazo-fijo-tenencia .tabla-contenedor obp-boton button,
+fondos-tenencia .tabla-contenedor obp-boton button,
+titulos-valores-tenencia .tabla-contenedor obp-boton button {
+    height: 20px !important;
+    padding: 0px !important;
+    width: 100px !important;
+}
+
+plazo-fijo-tasas info-de-tasas .tables table tbody td {
+    height: 20px !important;
+}
