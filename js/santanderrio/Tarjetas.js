@@ -23,7 +23,10 @@ palito.santanderrio.pages.tarjetas = function(contentLoadObserver) {
 				let scope = trScopes[i];
 
 				if ($tr.find(`th`).length) {
-					$tr.find("th:eq(1)").after(`<th scope="col" class="util-pdl">Descripción Extra</th>`);
+					// Sometimes the table is reused and therefore we do not need to re add the th
+					if ($tr.find(`th`).length == 4) {
+						$tr.find("th:eq(1)").after(`<th scope="col" class="util-pdl">Descripción Extra</th>`);
+					}
 				} else {
 					$tr.find("td:eq(1)").after(`<td class="extra-detail">${getDetailForKey(getKeyFromTr($tr, scope))}</td>`);
 				}
