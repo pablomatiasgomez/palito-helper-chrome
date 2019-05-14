@@ -101,7 +101,7 @@ palito.santanderrio.pages.titulosValores = function(contentLoadObserver) {
 				$tr.attr("title", palito.santanderrio.utils.scopeToText(trScope));
 
 				// Fix cotiacion with all decimals
-				let $cotizacionSpan = $tr.find("td:eq(3) span")
+				let $cotizacionSpan = $tr.find("td:eq(3) span");
 				$cotizacionSpan.text($cotizacionSpan.text().split(" ")[0] + " " + trScope.precioMercado);
 			}
 		});
