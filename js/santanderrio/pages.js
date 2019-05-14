@@ -5,6 +5,7 @@ if (!palito.santanderrio) palito.santanderrio = {};
 (function() {
 
 	const PAGE_HANDLERS = {
+		"!/cuentas-inicio": palito.santanderrio.pages.cuentas,
 		"!/plazo-fijo": palito.santanderrio.pages.plazosFijos,
 		"!/fondos-de-inversion": palito.santanderrio.pages.fondosDeInversion,
 		"!/titulos-valores":  palito.santanderrio.pages.titulosValores,

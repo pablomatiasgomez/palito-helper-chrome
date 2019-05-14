@@ -12,7 +12,7 @@ div.app home > obp-swiper .swiper-container-horizontal {
 
 
 div.app .sinfecha {
-    color: #585858 !important;
+    color: rgba(0,0,0,0.87) !important;
 }
 div.app .sinfecha span {
     position: relative !important;
@@ -44,6 +44,9 @@ div.app table .divisor {
 cuentas-inicio-movimientos table thead th {
     height: 25px !important;
     padding: 4px 5px !important;
+}
+cuentas-inicio-movimientos table thead tr:first-child th:first-child {
+    width: 130px !important;
 }
 
 /* Encabezado de tarjeta en el resumen */

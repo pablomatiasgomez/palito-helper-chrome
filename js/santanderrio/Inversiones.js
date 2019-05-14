@@ -89,6 +89,22 @@ palito.santanderrio.pages.titulosValores = function(contentLoadObserver) {
 		// Muevo el grafico al fondo
 		$(".tabla-contenedor").after($("obp-container"));
 		$(".tabla-contenedor").after("<br>");
+
+		// Agrego ciertos datos particulares
+		let trsSelector = "table.tenencia tbody > tr.ng-scope";
+		palito.santanderrio.utils.getScopeFromElements(trsSelector, "item").then(trScopes => {
+			for (let i = 0; i < trScopes.length; i++) {
+				let trScope = trScopes[i];
+				let $tr = $(`${trsSelector}:nth-child(${i + 1})`);
+
+				// Add popup with scope detail:
+				$tr.attr("title", palito.santanderrio.utils.scopeToText(trScope));
+
+				// Fix cotiacion with all decimals
+				let $cotizacionSpan = $tr.find("td:eq(3) span")
+				$cotizacionSpan.text($cotizacionSpan.text().split(" ")[0] + " " + trScope.precioMercado);
+			}
+		});
 	});
 
 	contentLoadObserver(() => {

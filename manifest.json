@@ -66,6 +66,7 @@
                 "js/santanderrio/Utils.js",
                 "js/santanderrio/Store.js",
 
+                "js/santanderrio/Cuentas.js",
                 "js/santanderrio/Tarjetas.js",
                 "js/santanderrio/Inversiones.js",
                 "js/santanderrio/pages.js"
