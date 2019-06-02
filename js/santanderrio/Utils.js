@@ -64,5 +64,6 @@ palito.santanderrio.utils.updateScopeToElement = function(selector, keyFromScope
 };
 
 palito.santanderrio.utils.scopeToText = function(scope) {
+	if (!scope) return "";
 	return Object.entries(scope).map(entry => entry[0] + ": " + entry[1]).join("\n");
 };

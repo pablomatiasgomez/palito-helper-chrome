@@ -20,7 +20,8 @@ palito.santanderrio.pages.tarjetas = function(contentLoadObserver) {
 			
 			for (let i = 0; i < rows.length; i++) {
 				let $tr = $(rows[i]);
-				let scope = trScopes[i];
+				let trScope = trScopes[i];
+				$tr.attr("title", palito.santanderrio.utils.scopeToText(trScope));
 
 				if ($tr.find(`th`).length) {
 					// Sometimes the table is reused and therefore we do not need to re add the th
@@ -28,7 +29,7 @@ palito.santanderrio.pages.tarjetas = function(contentLoadObserver) {
 						$tr.find("th:eq(1)").after(`<th scope="col" class="util-pdl">Descripción Extra</th>`);
 					}
 				} else {
-					$tr.find("td:eq(1)").after(`<td class="extra-detail">${getDetailForKey(getKeyFromTr($tr, scope))}</td>`);
+					$tr.find("td:eq(1)").after(`<td class="extra-detail">${getDetailForKey(getKeyFromTr($tr, trScope))}</td>`);
 				}
 			}
 
@@ -66,6 +67,15 @@ palito.santanderrio.pages.tarjetas = function(contentLoadObserver) {
 			return $tr.attr("detail-key");
 		}
 		let key = scope.comprobante.trim();
+		if (key == "000000") {
+			// En resumen online los debitos automaticos no tienen el comprobante en el campo pero si esta en el tr.
+			var regex = /^.*\ (\d{6})[*U]$/;
+			let detail = $tr.find("td:eq(1)").text().trim();
+
+			var match = regex.exec(detail);
+			key = match ? match[1] : "";
+		}
+
 		$tr.attr("detail-key", key);
 		return key;
 	}
