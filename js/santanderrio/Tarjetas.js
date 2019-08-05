@@ -88,7 +88,8 @@ palito.santanderrio.pages.tarjetas = function(contentLoadObserver) {
 		} else if (results.length === 1) {
 			return detailsByKey[results[0]];
 		} else {
-			throw "Found more than 1 matching key: " + results;
+			console.error(`Found more than 1 matching key. Keys: ${results}, values ${results.map(k => detailsByKey[k])}`);
+			return results.map(k => detailsByKey[k]).join(" | ");
 		}
 	}
 

@@ -11,6 +11,18 @@ div.app home > obp-swiper .swiper-container-horizontal {
 /* ... */
 
 
+/* Sidebar menu */
+.desktop menu .close-menu {
+    line-height: 40px !important;
+}
+obp-controller-menu-item .menu-item .titulo-lista-opciones {
+    padding: 10px !important;
+}
+obp-controller-menu-item .inner-list.expanded li {
+    margin: 7px 0 !important;
+}
+/* ... */
+
 div.app .sinfecha {
     color: rgba(0,0,0,0.87) !important;
 }
