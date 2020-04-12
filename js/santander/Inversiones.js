@@ -75,6 +75,7 @@ palito.santander.pages.titulosValores = function (contentLoadObserver) {
 	let loadTenencia = () => PalitoHelperUtils.waitForElementToLoad("table.tenencia").then(() => {
 		// If any radio is disabled, then there is nothing to do.
 		if (!$('[data-ng-model="cuenta.monedaSel"] md-radio-button[disabled=disabled]').length) {
+			// TODO when this happens, the angular scope of the old elements is lost.
 			// Clono el de pesos y lo dejo arriba, luego cambio el de abajo a dolares.
 			let titulosUSD = $("table.tenencia").parent();
 			let titulosARS = titulosUSD.clone();
@@ -96,13 +97,12 @@ palito.santander.pages.titulosValores = function (contentLoadObserver) {
 
 		// Agrego ciertos datos particulares
 		let trsSelector = "table.tenencia tbody > tr.ng-scope";
-		// TODO fixme.
-		console.warn(trsSelector);
 		palito.santander.utils.getScopeFromElements(trsSelector, "item").then(trScopes => {
-			console.warn(trScopes);
+			let $trs = $(trsSelector);
 			for (let i = 0; i < trScopes.length; i++) {
 				let trScope = trScopes[i];
-				let $tr = $(`${trsSelector}:nth-child(${i + 1})`);
+				if (!trScope) continue; // This because if multiple currencies, some rows miss their scope.
+				let $tr = $trs.eq(i);
 
 				// Add popup with scope detail:
 				$tr.attr("title", palito.santander.utils.scopeToText(trScope));
