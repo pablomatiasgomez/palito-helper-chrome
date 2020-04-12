@@ -1,27 +1,30 @@
 "use strict";
-if (!window.palito) var palito = window.palito = {};
-if (!palito.santanderrio) palito.santanderrio = {};
+if (!window.palito) window.palito = {};
+if (!palito.santander) palito.santander = {};
 
-(function() {
+(function () {
 
 	const PAGE_HANDLERS = {
-		"!/cuentas-inicio": palito.santanderrio.pages.cuentas,
-		"!/plazo-fijo": palito.santanderrio.pages.plazosFijos,
-		"!/fondos-de-inversion": palito.santanderrio.pages.fondosDeInversion,
-		"!/titulos-valores":  palito.santanderrio.pages.titulosValores,
-		"!/tarjetas":  palito.santanderrio.pages.tarjetas,
+		"!/cuentas-inicio": palito.santander.pages.cuentas,
+		"!/plazo-fijo": palito.santander.pages.plazosFijos,
+		"!/fondos-de-inversion": palito.santander.pages.fondosDeInversion,
+		"!/titulos-valores": palito.santander.pages.titulosValores,
+		"!/tarjetas": palito.santander.pages.tarjetas,
 	};
 
 
 	// TODO move this to the returned object of the handlers.
-	let onContentLoadCallback = () => {};
+	let onContentLoadCallback = () => {
+	};
 	let contentLoadObserver = callback => onContentLoadCallback = callback;
 	const loadingSelector = "md-dialog[aria-label='cargando'] md-progress-circular";
 	let checkContentLoaded = () => {
 		return PalitoHelperUtils.waitForElementToShow(loadingSelector).then(() => {
+			console.warn("Loading element shown");
 			// It actually disappears, but just in case.
 			return PalitoHelperUtils.waitForElementToHide(loadingSelector);
 		}).then(() => {
+			console.warn("Loading element disspeared");
 			onContentLoadCallback();
 			return checkContentLoaded();
 		});
@@ -30,9 +33,10 @@ if (!palito.santanderrio) palito.santanderrio = {};
 
 
 	let lastHandler = null;
-	window.addEventListener("hashchange", function(e) {
+	window.addEventListener("hashchange", function () {
 		if (lastHandler) lastHandler.destroy();
-		contentLoadObserver(() => {});
+		contentLoadObserver(() => {
+		});
 
 		let hash = location.hash.replace(/^#/, '');
 		let handler = PAGE_HANDLERS[hash];

@@ -1,8 +1,8 @@
 "use strict";
-var PalitoHelperUtils = { };
+let PalitoHelperUtils = {};
 
-PalitoHelperUtils.waitFor = function(selector, checkOperation) {
-	return new Promise((resolve, reject) => {
+PalitoHelperUtils.waitFor = function (selector, checkOperation) {
+	return new Promise((resolve) => {
 		let check = () => {
 			if (checkOperation(selector)) {
 				resolve();
@@ -14,15 +14,15 @@ PalitoHelperUtils.waitFor = function(selector, checkOperation) {
 	});
 };
 
-PalitoHelperUtils.waitForElementToHide = function(selector) {
+PalitoHelperUtils.waitForElementToHide = function (selector) {
 	return PalitoHelperUtils.waitFor(selector, selector => !$(selector).is(":visible"));
 };
 
-PalitoHelperUtils.waitForElementToShow = function(selector) {
+PalitoHelperUtils.waitForElementToShow = function (selector) {
 	return PalitoHelperUtils.waitFor(selector, selector => $(selector).is(":visible"));
 };
 
-PalitoHelperUtils.waitForElementToLoad = function(selector, length) {
+PalitoHelperUtils.waitForElementToLoad = function (selector, length) {
 	return PalitoHelperUtils.waitFor(selector, selector => length ? $(selector).length === length : !!$(selector).length);
 };
 

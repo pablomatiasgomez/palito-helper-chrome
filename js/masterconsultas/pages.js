@@ -1,6 +1,6 @@
 "use strict";
 (function() {
-	var BASE_PAGE = "/socios/context/index.action";
+	let BASE_PAGE = "/socios/context/index.action";
 
 	if (location.pathname !== BASE_PAGE) return;
 

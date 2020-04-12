@@ -1,18 +1,15 @@
 "use strict";
-var MonthlyBillTable = function($container) {
+let MonthlyBillTable = function ($container) {
 
-	const ENTER_KEY_CODE = 13;
-	const ESCAPE_KEY_CODE = 27;
-
-	var $headerTable;
-	var $table;
-	var $pageSizeSelector;
-
-	var SHARE_REGEX = /^\d+\/\d+$/;
+	const SHARE_REGEX = /^\d+\/\d+$/;
 
 	const DETAILS_BY_DATE_STORE_KEY = "masterconsultas.detailsByDate";
 	// Will be initialized when reading from sync
-	var detailsByDate = { };
+	let detailsByDate = {};
+
+	let $headerTable;
+	let $table;
+	let $pageSizeSelector;
 
 	function setItems() {
 		$headerTable = $container.find("table.ui-jqgrid-htable");
@@ -26,7 +23,7 @@ var MonthlyBillTable = function($container) {
 	}
 
 	function setPageSizeToMax() {
-		var lastValue = $pageSizeSelector.find("option:last").val();
+		let lastValue = $pageSizeSelector.find("option:last").val();
 		$pageSizeSelector.val(lastValue);
 		triggerEvent($pageSizeSelector, "change");
 		return PalitoHelperUtils.waitForElementToHide("#tablaMonthlyBill1 .loading.ui-state-default.ui-state-active");
@@ -44,7 +41,7 @@ var MonthlyBillTable = function($container) {
 
 		$headerTable.find("th#gridtable_dateOperation").css("width", "60px").find(">div").text("F. Operacion");			// Changing from 133px to 60px = 73px gain
 		$headerTable.find("th#gridtable_datePresentation").css("width", "60px").find(">div").text("F. Presentacion");	// Changing from 133px to 60px = 73px gain
-		$headerTable.find("th#gridtable_detailOperation").css("width", "200px")											// Changing from 355px to 200px = 155px gain
+		$headerTable.find("th#gridtable_detailOperation").css("width", "200px")                                         // Changing from 355px to 200px = 155px gain
 			.after(getHeaderHtml("moreDetail", "180px", "Detalle"));
 		$headerTable.find("th#gridtable_share").css("width", "40px").find(">div").text("Cuotas");						// Changing from 111px to 40px = 71px gain
 		$headerTable.find("th#gridtable_totalInPesos")
@@ -55,29 +52,29 @@ var MonthlyBillTable = function($container) {
 
 		$table.find("tr.jqgfirstrow td:eq(0)").css("width", "60px");													// Changing from 133px to 60px = 73px gain
 		$table.find("tr.jqgfirstrow td:eq(1)").css("width", "60px");													// Changing from 133px to 60px = 73px gain
-		$table.find("tr.jqgfirstrow td:eq(2)").css("width", "200px")													// Changing from 355px to 200px = 155px gain
-			.after('<td role="gridcell" style="height:0px;width:180px;"></td>');
+		$table.find("tr.jqgfirstrow td:eq(2)").css("width", "200px")                                                    // Changing from 355px to 200px = 155px gain
+			.after('<td role="gridcell" style="height:0;width:180px;"></td>');
 		$table.find("tr.jqgfirstrow td:eq(4)").css("width", "40px");													// Changing from 111px to 40px = 71px gain
 		$table.find("tr.jqgfirstrow td:eq(5)")
-			.after('<td role="gridcell" style="height:0px;width:70px;"></td>');
+			.after('<td role="gridcell" style="height:0;width:70px;"></td>');
 		$table.find("tr.jqgfirstrow td:eq(5)")
-			.after('<td role="gridcell" style="height:0px;width:60px;"></td>');
+			.after('<td role="gridcell" style="height:0;width:60px;"></td>');
 		$table.find("tr.jqgfirstrow td:eq(8)").css("width", "55px"); // This is just bugged in the original page..
 
-		var total = 0;
-		var totalLeft = 0;
-		var totalSet = false;
-		$table.find("tr").each(function() {
-			var date = getDateFromTr($(this));
-			var share = $(this).find("td[aria-describedby=gridtable_share]").text().trim();
-			var amountPerShare = parseValueToFloat($(this).find("td[aria-describedby=gridtable_totalInPesos]").text().trim());
-			var description = $(this).find("td[aria-describedby=gridtable_detailOperation]").text().trim();
+		let total = 0;
+		let totalLeft = 0;
+		let totalSet = false;
+		$table.find("tr").each(function () {
+			let date = getDateFromTr($(this));
+			let share = $(this).find("td[aria-describedby=gridtable_share]").text().trim();
+			let amountPerShare = parseValueToFloat($(this).find("td[aria-describedby=gridtable_totalInPesos]").text().trim());
+			let description = $(this).find("td[aria-describedby=gridtable_detailOperation]").text().trim();
 
-			var amountStr = "";
-			var amountLeftStr = "";
+			let amountStr = "";
+			let amountLeftStr = "";
 			if (SHARE_REGEX.test(share) && description !== "SU PAGO") {
-				var shares;
-				var sharesLeft;
+				let shares;
+				let sharesLeft;
 				if (share.trim() === "0/0") {
 					shares = 1;
 					sharesLeft = 1;
@@ -85,8 +82,8 @@ var MonthlyBillTable = function($container) {
 					shares = parseInt(share.split("/")[1]);
 					sharesLeft = shares - (share.split("/")[0] - 1); // Minus 1 because I want to count the one that I haven't paid yet.
 				}
-				var amount = shares * amountPerShare;
-				var amountLeft = sharesLeft * amountPerShare;
+				let amount = shares * amountPerShare;
+				let amountLeft = sharesLeft * amountPerShare;
 
 				total += amount;
 				totalLeft += amountLeft;
@@ -104,19 +101,19 @@ var MonthlyBillTable = function($container) {
 			$(this).find("td[aria-describedby=gridtable_totalInPesos]").after('<td role="gridcell" style="text-align:center;" title="' + amountLeftStr + '">' + amountLeftStr + '</td>');
 		});
 
-		$table.on("click", ".more-detail", function() {
+		$table.on("click", ".more-detail", function () {
 			let self = $(this);
 			if (self.find("input").length) return; // Input was already created.
 
 			let prevText = self.text();
 			let input = $(`<input type="text" style="width: 97%; font-family: inherit;" value="${self.text()}">`);
-			input.on("keyup", function(e) {
-				if (e.keyCode == ENTER_KEY_CODE) {
+			input.on("keyup", function (e) {
+				if (e.key === "Enter") {
 					let newDetail = $(this).val();
 					let date = getDateFromTr($(this).closest("tr"));
 					saveDetailForDate(date, newDetail);
 					self.text(newDetail);
-				} else if (e.keyCode == ESCAPE_KEY_CODE) {
+				} else if (e.key === "Escape") {
 					self.text(prevText);
 				}
 			});
@@ -131,7 +128,8 @@ var MonthlyBillTable = function($container) {
 
 	function readDetailsByDateFromStore() {
 		return new Promise((resolve, reject) => {
-			chrome.storage.sync.get(DETAILS_BY_DATE_STORE_KEY, function(result) {
+			chrome.storage.sync.get(DETAILS_BY_DATE_STORE_KEY, function (result) {
+				if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
 				detailsByDate = result[DETAILS_BY_DATE_STORE_KEY];
 				resolve(detailsByDate);
 			});
@@ -139,7 +137,7 @@ var MonthlyBillTable = function($container) {
 	}
 
 	function saveDetailsByDateToStore() {
-		chrome.storage.sync.set({ [DETAILS_BY_DATE_STORE_KEY]: detailsByDate });
+		chrome.storage.sync.set({[DETAILS_BY_DATE_STORE_KEY]: detailsByDate});
 	}
 
 	function getDetailForDate(date) {
@@ -163,14 +161,14 @@ var MonthlyBillTable = function($container) {
 	}
 
 	function parseValueToString(value) {
-		var parts = value.toString().split(".");
+		let parts = value.toString().split(".");
 
-		var integerPart = parts[0].split("").reverse().join("").match(/.{1,3}/g).join(".").split("").reverse().join("");
+		let integerPart = parts[0].split("").reverse().join("").match(/.{1,3}/g).join(".").split("").reverse().join("");
 		return integerPart + (parts[1] ? ("," + parts[1].substr(0, 2)) : ",00");
 	}
 
 	// Init
-	(function() {
+	(function () {
 		Promise.all([
 			PalitoHelperUtils.waitForElementToLoad("#tablaMonthlyBill1")
 				.then(() => PalitoHelperUtils.waitForElementToHide("#loadingIndicator")),

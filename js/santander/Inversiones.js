@@ -1,18 +1,18 @@
 "use strict";
-// TODO rename file?
-if (!window.palito) var palito = window.palito = {};
-if (!palito.santanderrio) palito.santanderrio = {};
-if (!palito.santanderrio.pages) palito.santanderrio.pages = {};
+if (!window.palito) window.palito = {};
+if (!palito.santander) palito.santander = {};
+if (!palito.santander.pages) palito.santander.pages = {};
 
 
-palito.santanderrio.pages.plazosFijos = function(contentLoadObserver) {
+palito.santander.pages.plazosFijos = function (contentLoadObserver) {
 	let loadTenencia = () => PalitoHelperUtils.waitForElementToLoad("table.tenencia").then(() => {
 		// Expando todos los PF por default.
 		$("table.tenencia .skip.ng-scope td").click();
 
 		// Muevo el grafico al fondo
-		$(".tabla-contenedor").after($("obp-container"));
-		$(".tabla-contenedor").after("<br>");
+		$(".tabla-contenedor")
+			.after($("obp-container"))
+			.after("<br>");
 	});
 
 	contentLoadObserver(() => {
@@ -25,12 +25,13 @@ palito.santanderrio.pages.plazosFijos = function(contentLoadObserver) {
 	});
 
 	return {
-		destroy: () => {}
+		destroy: () => {
+		}
 	};
 };
 
 
-palito.santanderrio.pages.fondosDeInversion = function(contentLoadObserver) {
+palito.santander.pages.fondosDeInversion = function (contentLoadObserver) {
 	let loadTenencia = () => PalitoHelperUtils.waitForElementToLoad("table.tenencia").then(() => {
 		// If any radio is disabled, then there is nothing to do.
 		if (!$('[data-ng-model="cuenta.monedaSel"] md-radio-button[disabled=disabled]').length) {
@@ -49,8 +50,9 @@ palito.santanderrio.pages.fondosDeInversion = function(contentLoadObserver) {
 		}
 
 		// Muevo el grafico al fondo
-		$(".tabla-contenedor").after($("obp-container"));
-		$(".tabla-contenedor").after("<br>");
+		$(".tabla-contenedor")
+			.after($("obp-container"))
+			.after("<br>");
 	});
 
 	contentLoadObserver(() => {
@@ -63,12 +65,13 @@ palito.santanderrio.pages.fondosDeInversion = function(contentLoadObserver) {
 	});
 
 	return {
-		destroy: () => {}
+		destroy: () => {
+		}
 	};
 };
 
 
-palito.santanderrio.pages.titulosValores = function(contentLoadObserver) {
+palito.santander.pages.titulosValores = function (contentLoadObserver) {
 	let loadTenencia = () => PalitoHelperUtils.waitForElementToLoad("table.tenencia").then(() => {
 		// If any radio is disabled, then there is nothing to do.
 		if (!$('[data-ng-model="cuenta.monedaSel"] md-radio-button[disabled=disabled]').length) {
@@ -87,18 +90,22 @@ palito.santanderrio.pages.titulosValores = function(contentLoadObserver) {
 		}
 
 		// Muevo el grafico al fondo
-		$(".tabla-contenedor").after($("obp-container"));
-		$(".tabla-contenedor").after("<br>");
+		$(".tabla-contenedor")
+			.after($("obp-container"))
+			.after("<br>");
 
 		// Agrego ciertos datos particulares
 		let trsSelector = "table.tenencia tbody > tr.ng-scope";
-		palito.santanderrio.utils.getScopeFromElements(trsSelector, "item").then(trScopes => {
+		// TODO fixme.
+		console.warn(trsSelector);
+		palito.santander.utils.getScopeFromElements(trsSelector, "item").then(trScopes => {
+			console.warn(trScopes);
 			for (let i = 0; i < trScopes.length; i++) {
 				let trScope = trScopes[i];
 				let $tr = $(`${trsSelector}:nth-child(${i + 1})`);
 
 				// Add popup with scope detail:
-				$tr.attr("title", palito.santanderrio.utils.scopeToText(trScope));
+				$tr.attr("title", palito.santander.utils.scopeToText(trScope));
 
 				// Fix cotiacion with all decimals
 				let $cotizacionSpan = $tr.find("td:eq(3) span");
@@ -117,7 +124,8 @@ palito.santanderrio.pages.titulosValores = function(contentLoadObserver) {
 	});
 
 	return {
-		destroy: () => {}
+		destroy: () => {
+		}
 	};
 };
 

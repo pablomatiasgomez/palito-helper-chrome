@@ -1,31 +1,28 @@
 "use strict";
-if (!window.palito) var palito = window.palito = {};
-if (!palito.santanderrio) palito.santanderrio = {};
-if (!palito.santanderrio.pages) palito.santanderrio.pages = {};
+if (!window.palito) window.palito = {};
+if (!palito.santander) palito.santander = {};
+if (!palito.santander.pages) palito.santander.pages = {};
 
-palito.santanderrio.pages.tarjetas = function(contentLoadObserver) {
-
-	const ENTER_KEY_CODE = 13;
-	const ESCAPE_KEY_CODE = 27;
+palito.santander.pages.tarjetas = function (contentLoadObserver) {
 
 	// Will be initialized when reading from store
-	var detailsByKey = { };
+	let detailsByKey = {};
 
 	function addTableColumns(isResumen) {
-		palito.santanderrio.utils.getScopeFromElements(".tabla-contenedor table tr", "linea").then(trScopes => {
+		palito.santander.utils.getScopeFromElements(".tabla-contenedor table tr", "linea").then(trScopes => {
 			let $tables = $(".tabla-contenedor table");
 			let rows = $tables.find("tr").toArray();
 
 			if (rows.length !== trScopes.length) throw `Found different amount of rows. ${rows.length} !== ${trScopes.length}`;
-			
+
 			for (let i = 0; i < rows.length; i++) {
 				let $tr = $(rows[i]);
 				let trScope = trScopes[i];
-				$tr.attr("title", palito.santanderrio.utils.scopeToText(trScope));
+				$tr.attr("title", palito.santander.utils.scopeToText(trScope));
 
 				if ($tr.find(`th`).length) {
 					// Sometimes the table is reused and therefore we do not need to re add the th
-					if ($tr.find(`th`).length == 4) {
+					if ($tr.find(`th`).length === 4) {
 						$tr.find("th:eq(1)").after(`<th scope="col" class="util-pdl">Descripción Extra</th>`);
 					}
 				} else {
@@ -40,22 +37,25 @@ palito.santanderrio.pages.tarjetas = function(contentLoadObserver) {
 	}
 
 	function bindExtraDetailClick($tables) {
-		$tables.find("tr .extra-detail").on("click", function(e) {
+		$tables.find("tr .extra-detail").on("click", function (e) {
 			e.stopPropagation();
 			let self = $(this);
 			if (self.find("input").length) return; // Input was already created.
 
 			let prevText = self.text();
 			let input = $(`<input type="text" class="extra-detail-edit" value="${self.text()}">`);
-			input.on("keypress", function(e) {
-				e.stopPropagation();
-				if (e.keyCode == ENTER_KEY_CODE) {
+			input.on("keyup", function (e) {
+				if (e.key === "Enter") {
 					let newDetail = $(this).val();
 					saveDetailForKey(getKeyFromTr($(this).closest("tr")), newDetail);
 					self.text(newDetail);
-				} else if (e.keyCode == ESCAPE_KEY_CODE) {
+				} else if (e.key === "Escape") {
 					self.text(prevText);
 				}
+			});
+			input.on("keypress", function (e) {
+				// Avoid opening the detail.
+				e.stopPropagation();
 			});
 			self.html(input);
 			input.focus();
@@ -67,12 +67,10 @@ palito.santanderrio.pages.tarjetas = function(contentLoadObserver) {
 			return $tr.attr("detail-key");
 		}
 		let key = scope.comprobante.trim();
-		if (key == "000000") {
+		if (key === "000000") {
 			// En resumen online los debitos automaticos no tienen el comprobante en el campo pero si esta en el tr.
-			var regex = /^.*\ (\d{6})[*U]$/;
 			let detail = $tr.find("td:eq(1)").text().trim();
-
-			var match = regex.exec(detail);
+			let match = /^.* (\d{6})[*U]$/.exec(detail);
 			key = match ? match[1] : "";
 		}
 
@@ -95,7 +93,7 @@ palito.santanderrio.pages.tarjetas = function(contentLoadObserver) {
 
 	function saveDetailForKey(key, detail) {
 		detailsByKey[key] = detail;
-		palito.santanderrio.store.saveDetailsByKeyToStore(detailsByKey);
+		palito.santander.store.saveDetailsByKeyToStore(detailsByKey);
 	}
 
 	function loadUltimosConsumos() {
@@ -108,16 +106,18 @@ palito.santanderrio.pages.tarjetas = function(contentLoadObserver) {
 		return PalitoHelperUtils.waitForElementToLoad(".tabla-contenedor table").then(() => addTableColumns(true));
 	}
 
-
 	contentLoadObserver(() => {
-		let selectedTab = $("nav[role='navigation'] button.md-active").text().trim();
-		if (selectedTab === "Últimos consumos") {
-			loadUltimosConsumos();
-		} else if (selectedTab === "Último resumen") {
-			loadUltimoResumen();
-		} else {
-			console.warn("Subtab not handled: " + selectedTab);
-		}
+		// Something happens in Tarjetas that changes 1 second after it loades..
+		setTimeout(() => {
+			let selectedTab = $("nav[role='navigation'] button.md-active").text().trim();
+			if (selectedTab === "Últimos consumos") {
+				loadUltimosConsumos();
+			} else if (selectedTab === "Último resumen") {
+				loadUltimoResumen();
+			} else {
+				console.warn("Subtab not handled: " + selectedTab);
+			}
+		}, 1500);
 	});
 
 	// If the "Ultimos consumos" button is clicked, no loading appears, but we still need to process it.
@@ -125,9 +125,10 @@ palito.santanderrio.pages.tarjetas = function(contentLoadObserver) {
 		$("nav[role='navigation'] button:eq(0)").on("click", loadUltimosConsumos);
 	});
 
-	palito.santanderrio.store.readDetailsByKeyFromStore().then(result => detailsByKey = result);
+	palito.santander.store.readDetailsByKeyFromStore().then(result => detailsByKey = result);
 
 	return {
-		destroy: () => {}
+		destroy: () => {
+		}
 	};
 };
