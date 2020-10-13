@@ -10,7 +10,7 @@ palito.santander.store.readDetailsByKeyFromStore = function () {
 	return new Promise((resolve, reject) => {
 		chrome.storage.sync.get(DETAILS_BY_KEY_STORE_KEY, function (result) {
 			if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
-			resolve(result[DETAILS_BY_KEY_STORE_KEY]);
+			resolve(result[DETAILS_BY_KEY_STORE_KEY] || {});
 		});
 	});
 };

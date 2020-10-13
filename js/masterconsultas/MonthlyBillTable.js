@@ -130,7 +130,7 @@ let MonthlyBillTable = function ($container) {
 		return new Promise((resolve, reject) => {
 			chrome.storage.sync.get(DETAILS_BY_DATE_STORE_KEY, function (result) {
 				if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
-				detailsByDate = result[DETAILS_BY_DATE_STORE_KEY];
+				detailsByDate = result[DETAILS_BY_DATE_STORE_KEY] || {};
 				resolve(detailsByDate);
 			});
 		});
