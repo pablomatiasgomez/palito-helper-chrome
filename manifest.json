@@ -14,7 +14,8 @@
     },
 
     "permissions": [
-      "storage"
+        "*://*.buenosaires.gob.ar/*",
+        "storage"
     ],
 
     "content_scripts": [
@@ -53,7 +54,29 @@
             "css": [
                 "css/santander/styles.css"
             ]
+        },
+        {
+            "matches": [
+                "*://*.mapa.buenosaires.gob.ar/*"
+            ],
+            "all_frames": true,
+            "js": [
+                "js/jquery-3.3.1.min.js",
+                "js/PalitoHelperUtils.js",
+
+                "js/mapabuenosaires/MapPage.js",
+                "js/mapabuenosaires/pages.js"
+            ],
+            "css": [
+            ]
         }
-    ]
+    ],
+
+    "background": {
+        "scripts": [
+            "js/background.js"
+        ],
+        "persistent": false
+    }
 }
 
