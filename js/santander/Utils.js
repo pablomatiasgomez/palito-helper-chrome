@@ -3,22 +3,6 @@ if (!window.palito) window.palito = {};
 if (!palito.santander) palito.santander = {};
 if (!palito.santander.utils) palito.santander.utils = {};
 
-palito.santander.utils.executeScript = function (script, eventMatcher) {
-	return new Promise((resolve) => {
-		let listener = function (event) {
-			if (event.source !== window) return;
-			if (eventMatcher(event)) {
-				window.removeEventListener("message", listener);
-				resolve(event.data);
-			}
-		};
-		window.addEventListener("message", listener, false);
-
-		let scriptElement = document.createElement('script');
-		scriptElement.textContent = script;
-		document.head.appendChild(scriptElement);
-	});
-};
 
 /**
  * @param selector of elements that want to match.
@@ -27,7 +11,7 @@ palito.santander.utils.executeScript = function (script, eventMatcher) {
  */
 palito.santander.utils.getScopeFromElements = function (selector, keyFromScope) {
 	let eventType = "SCOPE_FETCH";
-	return palito.santander.utils.executeScript(`
+	return PalitoHelperUtils.executeScript(`
 		(function() {
 			let elements = document.querySelectorAll("${selector}");
 			let scopes = [];
@@ -49,7 +33,7 @@ palito.santander.utils.getScopeFromElements = function (selector, keyFromScope) 
 
 palito.santander.utils.updateScopeToElement = function (selector, keyFromScope, keyInScope, valueForKey) {
 	let eventType = "SCOPE_CHANGE";
-	return palito.santander.utils.executeScript(`
+	return PalitoHelperUtils.executeScript(`
 		(function() {
 			let element = document.querySelector("${selector}");
 			let scope = angular.element(element).scope()["${keyFromScope}"];

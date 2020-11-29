@@ -5,7 +5,7 @@
     "short_name": "PalitoHelper",
     "description": "Chrome extension to modify pages on the fly in order to make life easier",
     "author": "Pablo Matías Gomez",
-    "version": "1.2.0",
+    "version": "1.3.0",
 
     "icons": {
         "16": "images/icons/stick.png",

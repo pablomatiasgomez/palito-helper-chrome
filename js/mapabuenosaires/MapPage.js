@@ -9,7 +9,8 @@ let MapPage = function () {
 			body: (seccion, manzana, parcela) => {
 				return `a=advsearch&type=and&asearchfield%5B%5D=SECCION&asearchopt_SECCION=Contains&value_SECCION=${seccion}&value1_SECCION=&asearchfield%5B%5D=MANZANA&asearchopt_MANZANA=Contains&value_MANZANA=${manzana}&value1_MANZANA=&asearchfield%5B%5D=PARCELA&asearchopt_PARCELA=Contains&value_PARCELA=${parcela}&value1_PARCELA=&asearchfield%5B%5D=NOMENCLATURA&asearchopt_NOMENCLATURA=Contains&value_NOMENCLATURA=&value1_NOMENCLATURA=&asearchfield%5B%5D=LINK_IMAGEN&asearchopt_LINK_IMAGEN=Contains&value_LINK_IMAGEN=&value1_LINK_IMAGEN=`;
 			},
-			startingTdIndex: 3
+			idTdIndex: 3,
+			linkTdIndexes: [ 4 ],
 		},
 		{
 			name: "Perimetro Manzana",
@@ -17,7 +18,8 @@ let MapPage = function () {
 			body: (seccion, manzana, parcela) => {
 				return `a=advsearch&type=and&asearchfield%5B%5D=SECCION&asearchopt_SECCION=Contains&value_SECCION=${seccion}&value1_SECCION=&asearchfield%5B%5D=MANZANA&asearchopt_MANZANA=Contains&value_MANZANA=${manzana}&value1_MANZANA=&asearchfield%5B%5D=SECCION_MANZANA&asearchopt_SECCION_MANZANA=Contains&value_SECCION_MANZANA=&value1_SECCION_MANZANA=&asearchfield%5B%5D=LINK_IMAGEN&asearchopt_LINK_IMAGEN=Contains&value_LINK_IMAGEN=&value1_LINK_IMAGEN=`;
 			},
-			startingTdIndex: 2
+			idTdIndex: 2,
+			linkTdIndexes: [ 3 ],
 		},
 		{
 			name: "Plano Manzana",
@@ -25,7 +27,17 @@ let MapPage = function () {
 			body: (seccion, manzana, parcela) => {
 				return `a=advsearch&type=and&asearchfield%5B%5D=SECCION&asearchopt_SECCION=Contains&value_SECCION=${seccion}&value1_SECCION=&asearchfield%5B%5D=MANZANA&asearchopt_MANZANA=Contains&value_MANZANA=${manzana}&value1_MANZANA=&asearchfield%5B%5D=SECCION_MANZANA&asearchopt_SECCION_MANZANA=Contains&value_SECCION_MANZANA=&value1_SECCION_MANZANA=&asearchfield%5B%5D=LINK_IMAGEN&asearchopt_LINK_IMAGEN=Contains&value_LINK_IMAGEN=&value1_LINK_IMAGEN=`;
 			},
-			startingTdIndex: 2
+			idTdIndex: 2,
+			linkTdIndexes: [ 3 ],
+		},
+		{
+			name: "Ficha Poligonal",
+			key: "ficha_poli",
+			body: (seccion, manzana, parcela) => {
+				return `a=advsearch&type=and&asearchfield%5B%5D=SECCION&asearchopt_SECCION=Contains&value_SECCION=${seccion}&value1_SECCION=&asearchfield%5B%5D=MANZANA&asearchopt_MANZANA=Contains&value_MANZANA=${manzana}&value1_MANZANA=&asearchfield%5B%5D=SECCION_MANZANA&asearchopt_SECCION_MANZANA=Contains&value_SECCION_MANZANA=&value1_SECCION_MANZANA=&asearchfield%5B%5D=ORIGEN&asearchopt_ORIGEN=Contains&value_ORIGEN=&value1_ORIGEN=&asearchfield%5B%5D=ANTECEDENTE&asearchopt_ANTECEDENTE=Contains&value_ANTECEDENTE=&value1_ANTECEDENTE=&asearchfield%5B%5D=LINK_IMAGEN_FRENTE&asearchopt_LINK_IMAGEN_FRENTE=Contains&value_LINK_IMAGEN_FRENTE=&value1_LINK_IMAGEN_FRENTE=&asearchfield%5B%5D=LINK_IMAGEN_DORSO&asearchopt_LINK_IMAGEN_DORSO=Contains&value_LINK_IMAGEN_DORSO=&value1_LINK_IMAGEN_DORSO=`;
+			},
+			idTdIndex: 2,
+			linkTdIndexes: [ 5, 6 ],
 		},
 	];
 
@@ -46,15 +58,17 @@ let MapPage = function () {
 			"body": type.body(seccion, manzana, parcela),
 		}).then(response => {
 			return $(response).find("table.data tr:not(:first)").toArray()
-				.map(tr => {
+				.flatMap(tr => {
 					let $tr = $(tr);
-					let id = $tr.find("td").eq(type.startingTdIndex).text();
-					let imagePath = $tr.find("td").eq(type.startingTdIndex + 1).text();
-					let link = `${HOST}/${type.key}/${imagePath}`;
-					return {
-						id: id,
-						link: link,
-					};
+					let id = $tr.find("td").eq(type.idTdIndex).text();
+					return type.linkTdIndexes.map(linkTdIndex => {
+						let imagePath = $tr.find("td").eq(linkTdIndex).text();
+						let link = `${HOST}/${type.key}/${imagePath}`;
+						return {
+							id: id,
+							link: link,
+						};
+					});
 				});
 		});
 	};
@@ -84,7 +98,7 @@ let MapPage = function () {
 	};
 
 	let listenToInfoOpen = function() {
-		let mutationObserver = new MutationObserver(function(mutations) {
+		let observerFn = function() {
 			let id = infoDiv.find("table td.clave").toArray()
 				.filter(el => el.innerText.trim() === "Identificador Catastral:")
 				.map(el => $(el).next().text().trim())
@@ -93,8 +107,13 @@ let MapPage = function () {
 			if (id && id != currentId) {
 				processNewId(id);
 			}
-		});
+		};
+
+		let mutationObserver = new MutationObserver(observerFn);
 		mutationObserver.observe(infoDiv.get(0), { attributes : true, attributeFilter : ['style'] });
+
+		// trigger a check to see if it Info is already opened:
+		observerFn();
 	};
 
 	let makeRequest = function (options) {
@@ -106,9 +125,30 @@ let MapPage = function () {
 		});
 	};
 
+	// Temporary fix because the page is currently broken.
+	// It is using ids like "093-049-033" to get the pictures, but it currently works only with "93-049-033"
+	// so we are stripping the first 0 for now.
+	let fixParcelaPictures = function() {
+		return PalitoHelperUtils.executeScript(`
+			(function() {
+				let usigFotosParcela = usig.FotosParcela;
+				usig.FotosParcela = function(a, b) {
+					if (a[0] === "0") {
+						a = a.substring(1);
+						console.log("Changing id to " + a);
+					}
+					return usigFotosParcela.call(this, a, b);
+				};
+				usig.FotosParcela.defaults = usigFotosParcela.defaults;
+			})();
+		`);
+	};
+
 	// Init
 	(function () {
 		return Promise.resolve().then(() => {
+			return fixParcelaPictures();
+		}).then(() => {
 			return listenToInfoOpen();
 		});
 	})();
