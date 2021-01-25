@@ -90,6 +90,7 @@
     "globals"       : {
         "chrome": true,
         "PalitoHelperUtils": true,
+        "palito": true,
         "$": true
     }        // additional predefined global variables
 }

@@ -125,30 +125,9 @@ let MapPage = function () {
 		});
 	};
 
-	// Temporary fix because the page is currently broken.
-	// It is using ids like "093-049-033" to get the pictures, but it currently works only with "93-049-033"
-	// so we are stripping the first 0 for now.
-	let fixParcelaPictures = function() {
-		return PalitoHelperUtils.executeScript(`
-			(function() {
-				let usigFotosParcela = usig.FotosParcela;
-				usig.FotosParcela = function(a, b) {
-					if (a[0] === "0") {
-						a = a.substring(1);
-						console.log("Changing id to " + a);
-					}
-					return usigFotosParcela.call(this, a, b);
-				};
-				usig.FotosParcela.defaults = usigFotosParcela.defaults;
-			})();
-		`);
-	};
-
 	// Init
 	(function () {
 		return Promise.resolve().then(() => {
-			return fixParcelaPictures();
-		}).then(() => {
 			return listenToInfoOpen();
 		});
 	})();
